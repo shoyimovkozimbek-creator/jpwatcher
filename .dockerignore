@@ -1,0 +1,10 @@
+original/
+data/
+watcher-config.private.json
+.env
+node_modules/
+*.png
+*.log
+test-results.txt
+.git/
+.venv/

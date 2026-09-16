@@ -1,0 +1,26 @@
+services:
+  agent:
+    build: .
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 120s
+    shm_size: 1gb
+    security_opt:
+      - seccomp=./deploy/seccomp_profile.json
+    environment:
+      TZ: Asia/Tashkent
+      AGENT_DATA_DIR: /app/data
+      AGENT_HEADLESS: "true"
+      AGENT_PANEL: "true"
+      AGENT_PANEL_HOST: "0.0.0.0"
+    ports:
+      - "127.0.0.1:4173:4173"
+    volumes:
+      - ./data:/app/data
+      - ./watcher-config.private.json:/app/watcher-config.private.json:ro
+      - ./agent-config.json:/app/agent-config.json:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

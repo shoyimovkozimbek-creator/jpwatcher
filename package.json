@@ -1,0 +1,19 @@
+{
+  "name": "jp-booking-agent-local",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Local Short stay reservation assistant with durable candidate state",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node service.cjs",
+    "panel": "node server.cjs",
+    "test": "node --require ./bootstrap.cjs --test --test-isolation=none --test-timeout=90000 tests/*.test.cjs",
+    "test:core": "node --require ./bootstrap.cjs --test --test-isolation=none --test-timeout=90000 tests/core.test.cjs tests/telegram.test.cjs",
+    "test:browser": "node --require ./bootstrap.cjs --test --test-isolation=none --test-timeout=90000 tests/browser.test.cjs tests/reliability.test.cjs"
+  },
+  "dependencies": {
+    "playwright": "1.62.1"
+  }
+}

@@ -1,0 +1,22 @@
+[Unit]
+Description=Japan Short Stay Telegram Booking Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jpagent
+WorkingDirectory=/opt/jp-booking-agent
+ExecStart=/usr/bin/node /opt/jp-booking-agent/service.cjs
+Environment=NODE_ENV=production
+Environment=AGENT_HEADLESS=true
+Environment=AGENT_DATA_DIR=/opt/jp-booking-agent/data
+Restart=on-failure
+RestartPreventExitStatus=78
+RestartSec=10
+TimeoutStopSec=120
+KillSignal=SIGTERM
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
