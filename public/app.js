@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s);
 const labels={queued:'Navbatda',working:'To‘ldirilmoqda',submitting:'Yuborilmoqda',booked:'BRON BOR',waitlisted:'Kutish ro‘yxati',uncertain:'Natija noaniq',review:'Tekshirish tayyor',paused:'Qo‘lda tekshirish',failed:'Xato'};
 function node(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
 function error(message){$('#error').textContent=message;$('#error').hidden=!message;}
-async function post(url,body){const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':state.csrf},body:JSON.stringify(body)});const result=await res.json();if(!res.ok)throw Error(result.error||'So‘rov bajarilmadi');return result;}
+async function post(url,body){const res=await apiFetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':state.csrf},body:JSON.stringify(body)});const result=await res.json();if(!res.ok)throw Error(result.error||'So‘rov bajarilmadi');return result;}
 async function action(fn){try{error('');await fn();await refresh();}catch(e){error(e.message);}}
 function render(){
   if(!scheduleDirty&&state.schedule){for(const [k,v] of Object.entries(state.schedule)){const f=$('#daily').elements.namedItem(k);if(f)f.value=String(v);}}
@@ -32,7 +32,7 @@ function render(){
   if(!state.candidates.length){const tr=node('tr');const td=node('td','Nomzodlar hali qo‘shilmagan. Yuqoridagi formadan boshlang.');td.colSpan=5;tr.append(td);rows.append(tr);}
   $('#events').replaceChildren(...state.events.map(e=>{const d=node('div',undefined,'event');d.append(node('time',new Date(e.at).toLocaleTimeString('uz-UZ',{timeZone:'Asia/Tashkent'})),node('span',e.message));return d;}));
 }
-async function refresh(){if(refreshing)return;refreshing=true;try{const r=await fetch('/api/state');if(!r.ok)throw Error('Ulanish xatosi');state=await r.json();render();}catch{$('#connection').textContent='Server bilan ulanish yo‘q';}finally{refreshing=false;}}
+async function refresh(){if(refreshing)return;refreshing=true;try{const r=await apiFetch('/api/state');if(!r.ok)throw Error('Ulanish xatosi');state=await r.json();render();}catch{$('#connection').textContent='Backend ulanmagan';}finally{refreshing=false;}}
 function cancelEdit(){$('#candidate').reset();delete $('#candidate').dataset.id;$('#candidate-title').textContent='Nomzod qo‘shish';$('#cancel-edit').hidden=true;}
 $('#cancel-edit').addEventListener('click',cancelEdit);
 $('#candidate').addEventListener('submit',e=>{e.preventDefault();action(async()=>{const id=e.target.dataset.id;await post(id?'/api/edit':'/api/candidates',{...Object.fromEntries(new FormData(e.target)),...(id?{id}:{})});cancelEdit();});});

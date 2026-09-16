@@ -9,6 +9,10 @@ function config(){
     dataDir:process.env.AGENT_DATA_DIR||path.join(BASE,'data'),
     dashboardEnabled:process.env.AGENT_PANEL==='true'||app.dashboardEnabled===true,
     panelHost:process.env.AGENT_PANEL_HOST||'127.0.0.1',
+    port:Number(process.env.PORT||4173),
+    publicHost:process.env.RENDER_EXTERNAL_HOSTNAME||'',
+    adminKey:process.env.ADMIN_API_KEY||'',
+    frontendOrigin:process.env.FRONTEND_ORIGIN||'',
     headless:process.env.AGENT_HEADLESS?process.env.AGENT_HEADLESS==='true':app.headless!==false,
     browserChannel:process.env.BROWSER_CHANNEL||app.browserChannel||(process.platform==='win32'?'chrome':undefined)};
 }

@@ -19,14 +19,14 @@ async function main({dashboard=false}={}){
     store?.close();process.exitCode=code;
   }
   try{
-    const cfg=config();lock=await acquireLock();store=new Store(cfg.dataDir);store.recover();
+    const cfg=config();if(cfg.publicHost&&cfg.adminKey.length<32)throw new Error('ADMIN_API_KEY kamida 32 belgi bo‘lsin');lock=await acquireLock();store=new Store(cfg.dataDir);store.recover();
     agent=new Agent(store,{headless:cfg.headless,browserChannel:cfg.browserChannel});
     notifier=new Notifier(store,cfg);scheduler=new Scheduler(store,agent,cfg);bot=new Bot(store,agent,scheduler,cfg);
     if(!notifier.configured())throw new Error('Telegram token/owner_chat_id sozlanmagan');
     const identity=await notifier.api.call('getMe');
     const hook=await notifier.api.call('getWebhookInfo');if(hook.url)throw new Error('Webhook mavjud. Eski bot ulanishini avval tekshiring.');
     console.log(`Telegram agent: @${identity.username}. Kunlik jadval va nomzodlar: /status. Ctrl+C: to‘xtatish.`);
-    if(dashboard||cfg.dashboardEnabled){httpServer=require('./server.cjs').createServer({store,agent,notifier,scheduler,config:cfg});await new Promise((r,j)=>{httpServer.once('error',j);httpServer.listen(4173,cfg.panelHost,r);});console.log('Admin panel: http://127.0.0.1:4173');}
+    if(dashboard||cfg.dashboardEnabled){httpServer=require('./server.cjs').createServer({store,agent,notifier,scheduler,config:cfg,port:cfg.port});await new Promise((r,j)=>{httpServer.once('error',j);httpServer.listen(cfg.port,cfg.panelHost,r);});console.log(`Admin API port: ${cfg.port}`);}
     store.notify(`boot:${Date.now()}`,'🤖 Telegram bron agenti ishga tushdi.\n/add — nomzod qo‘shish\n/status — kunlik jadval\n/help — barcha buyruqlar');
     process.once('SIGINT',()=>close());process.once('SIGTERM',()=>close());
     bot.run().catch(async()=>{store.notify(`bot-error:${Date.now()}`,'⚠️ Telegram boshqaruvi ishlamay qoldi. Token, webhook va eski watcher holatini tekshiring. Kunlik agent to‘xtatildi.');await close(78);});
