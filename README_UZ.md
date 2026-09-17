@@ -22,8 +22,8 @@ Bundled Codex Node va Playwright mavjud bo‘lsa, Windows skripti kutubxonalarni
 
 ## Kunlik ish
 
-- 17:55 — har bir navbatdagi nomzod uchun alohida brauzer sessiyasi tayyorlanadi.
-- 18:00–20:00 — Toshkent vaqti bilan Short stay (Applicant) kuzatiladi.
+- 18:55 — har bir navbatdagi nomzod uchun alohida brauzer sessiyasi kalendarga kirib tayyor turadi.
+- 19:00–20:00 — Toshkent vaqti bilan Short stay (Applicant) kuzatiladi.
 - Default parallel rejim: **all — barcha navbatdagi nomzodlar**.
 - Joy ochilganda barcha tayyor sessiyalar ishga kirishadi. Bir nechta vaqt bo‘lsa nomzodlar ular orasida taqsimlanadi.
 - Har nomzodning cookie/session’i alohida. Bitta pasport ikki ishchiga berilmaydi.

@@ -9,10 +9,14 @@ async function action(fn){try{error('');await fn();await refresh();}catch(e){err
 function render(){
   if(!scheduleDirty&&state.schedule){for(const [k,v] of Object.entries(state.schedule)){const f=$('#daily').elements.namedItem(k);if(f)f.value=String(v);}}
   $('#totals').replaceChildren(...[['queued','Navbatda'],['working','Jarayonda'],['booked','Bron bor'],['uncertain','Tekshirish kerak']].map(([key,title])=>node('div',`${title}: ${state.candidates.filter(c=>c.state===key).length}`,'badge')));
-  $('#connection').textContent='Lokal ulanish bor';$('#status').textContent=state.agent.message;
+  $('#connection').textContent=apiBase?'Xavfsiz ulanish bor':'Lokal ulanish bor';$('#status').textContent=state.agent.message;
   $('#telegram').textContent=state.telegram?`Telegram sozlangan · yuborilmagan xabarlar: ${state.pendingNotifications}`:'Telegram sozlanmagan';
   $('#start').disabled=state.agent.running||!state.candidates.some(c=>c.state==='queued');$('#stop').disabled=!state.agent.running;
   $('#count').textContent=state.candidates.length;
+  const sessions=state.agent.sessions||[];$('#session-count').textContent=String(sessions.length);
+  const sessionRoot=$('#sessions');sessionRoot.replaceChildren();
+  if(!sessions.length)sessionRoot.append(node('div','Agent ishga tushganda har bir nomzodning alohida sessiyasi shu yerda ko‘rinadi.','empty'));
+  for(const s of sessions){const card=node('article',undefined,`session ${s.phase||''}`),head=node('div',undefined,'session-head');head.append(node('span',`#${s.index} · ${s.name}`),node('small',s.phase||'tayyor'));card.append(head,node('p',s.message||'Tayyor'));if(s.lastCheck)card.append(node('small',`Oxirgi tekshiruv: ${new Date(s.lastCheck).toLocaleTimeString('uz-UZ',{timeZone:'Asia/Tashkent'})}`));sessionRoot.append(card);}
   const rows=$('#rows');rows.replaceChildren();
   for(const c of state.candidates){
     const tr=node('tr');const name=node('td',`${c.family} ${c.given}`);name.append(node('small',c.email));tr.append(name,node('td',c.passportMasked));

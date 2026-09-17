@@ -1,7 +1,7 @@
 'use strict';
 const {tashkentParts}=require('./core.cjs');
 function scheduleSettings(store,config={}){
-  return store.setting('schedule',{enabled:config.scheduleEnabled!==false,prepare:config.prepareTime||'17:55',release:config.releaseTime||'18:00',end:config.endTime||'20:00',parallel:config.parallel||'all'});
+  return store.setting('schedule',{enabled:config.scheduleEnabled!==false,prepare:config.prepareTime||'18:55',release:config.releaseTime||'19:00',end:config.endTime||'20:00',parallel:config.parallel||'all'});
 }
 function validateSchedule(s){
   if(typeof s.enabled!=='boolean'||(s.parallel!=='all'&&(!Number.isInteger(s.parallel)||s.parallel<1||s.parallel>20)))throw new Error('Jadval sozlamasi xato');

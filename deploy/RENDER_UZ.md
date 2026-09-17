@@ -89,7 +89,7 @@ Frontend sahifasi ochiq bo‘lishi mumkin, ammo nomzodlar, skrinshotlar va boshq
 5. `/test` — ochiq joy bo‘lsa forma va tasdiqlash sahifasigacha boradi, Reserve bosilmaydi. Telegram skrinshotlari kelishini tekshiring. Joy yopiq bo‘lsa yakuniy forma testi bajarilmaydi.
 6. `/stop` — sinovni to‘xtating.
 7. Testdan `review` holatiga o‘tgan nomzodlar uchun, bron olinmaganini bilgan holda `/no_booking KOD` bilan qayta navbatga qo‘ying.
-8. `/schedule on`. Default: 17:55 tayyorlanish, 18:00–20:00 qidirish; Toshkent vaqti.
+8. `/schedule on`. Default: 18:55 tayyorlanish, 19:00–20:00 qidirish; Toshkent vaqti.
 
 `/stop` bugungi avtomatik ishni ham to‘xtatadi. Shu kunning o‘zida qayta ishga tushirish kerak bo‘lsa `/run`; u 30 daqiqalik qo‘lda qidiruvni boshlaydi. Ertangi jadval saqlanadi.
 

@@ -88,6 +88,11 @@ test('parallel: the real calendar and worker loop books 20 candidates using 20 i
   console.log(`LOCAL 20-CANDIDATE RESULT: ${Date.now()-start} ms, ${f.submissions.length} unique submissions, peak simultaneous requests ${f.peak()}`);
 });
 
+test('session count follows queued candidates: one candidate opens one session',async t=>{
+  const f=await site(t);f.store.add(candidate(35));f.agent.start({mode:'live',parallel:'all',endAt:new Date(Date.now()+30000).toISOString()});await f.agent.done;
+  assert.equal(f.agent.options.parallel,1);assert.equal(f.agent.status().sessions.length,1);assert.equal(f.submissions.length,1);
+});
+
 test('claim: competing workers cannot begin the same candidate twice',async t=>{
   const f=await site(t);const id=f.store.add(candidate(40)),c=f.store.get(id),slot={url:f.origin+'/reservations/option',date:'2026-09-23',time:'10:00'};
   await Promise.all([f.agent.book(c,slot),f.agent.book(c,slot)]);assert.equal(f.submissions.length,1);
@@ -114,6 +119,6 @@ test('resource startup: a hung page acquisition is bounded',async()=>{
   const a=new Agent({});await assert.rejects(a.resource(()=>new Promise(()=>{}),()=>{},20),/muddati tugadi/);
 });
 
-test('default schedule watches 18:00–20:00 and uses every candidate',()=>{
-  const s=scheduleSettings({setting:(key,fallback)=>fallback});assert.deepEqual(s,{enabled:true,prepare:'17:55',release:'18:00',end:'20:00',parallel:'all'});
+test('default schedule watches 19:00–20:00 and uses every candidate',()=>{
+  const s=scheduleSettings({setting:(key,fallback)=>fallback});assert.deepEqual(s,{enabled:true,prepare:'18:55',release:'19:00',end:'20:00',parallel:'all'});
 });

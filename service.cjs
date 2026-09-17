@@ -20,7 +20,7 @@ async function main({dashboard=false}={}){
   }
   try{
     const cfg=config();if(cfg.publicHost&&cfg.adminKey.length<32)throw new Error('ADMIN_API_KEY kamida 32 belgi bo‘lsin');lock=await acquireLock();store=new Store(cfg.dataDir);store.recover();
-    agent=new Agent(store,{headless:cfg.headless,browserChannel:cfg.browserChannel});
+    agent=new Agent(store,{headless:cfg.headless,browserChannel:cfg.browserChannel,screenshots:cfg.screenshots});
     notifier=new Notifier(store,cfg);scheduler=new Scheduler(store,agent,cfg);bot=new Bot(store,agent,scheduler,cfg);
     if(!notifier.configured())throw new Error('Telegram token/owner_chat_id sozlanmagan');
     const identity=await notifier.api.call('getMe');

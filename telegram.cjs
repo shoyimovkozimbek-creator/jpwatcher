@@ -36,7 +36,7 @@ class Notifier{
     finally{this.busy=false;}
   }
 }
-const HELP=`🇯🇵 Short stay bron agenti\n\n/add — nomzod qo‘shish (bosqichma-bosqich)\n/list — nomzodlar va natijalar\n/screens KOD — jarayon skrinshotlari\n/panel — admin panel manzili\n/edit KOD — nomzodni tahrirlash\n/remove KOD — navbatdan olish\n/status — agent va jadval\n/schedule on — har kuni 17:55 tayyorlanish, 18:00–20:00 qidirish\n/schedule off — kunlik ishni o‘chirish\n/end 20:00 — qidiruv yakun vaqti\n/parallel all — barcha nomzodlar bir vaqtda (yoki 1–20)\n/run — hozir avtomatik bronni boshlash\n/test — hozir faqat tekshirishgacha\n/stop — bugungi ishni to‘xtatish\n/booked KOD — emaildan bronni tasdiqladim\n/no_booking KOD — tekshirdim, bron yo‘q, qayta navbat\n/waitlisted KOD — kutish ro‘yxatida\n/cancel — ma’lumot kiritishni bekor qilish\n\nGmailni o‘zingiz tekshirasiz. Sayt natijalari skrinshot bilan yuboriladi.`;
+const HELP=`🇯🇵 Short stay bron agenti\n\n/panel — telefon uchun boshqaruv paneli\n/add — nomzod qo‘shish (bosqichma-bosqich)\n/list — nomzodlar va natijalar\n/status — barcha sessiyalar holati\n/edit KOD — nomzodni tahrirlash\n/remove KOD — navbatdan olish\n/schedule on — har kuni 18:55 tayyorlanish, 19:00–20:00 qidirish\n/schedule off — kunlik ishni o‘chirish\n/end 20:00 — qidiruv yakun vaqti\n/parallel all — barcha nomzodlar alohida sessiyada\n/run — hozir avtomatik bronni boshlash\n/test — Reserve bosmasdan sinash\n/stop — bugungi ishni to‘xtatish\n/booked KOD — emaildan bronni tasdiqladim\n/no_booking KOD — bron yo‘q, qayta navbat\n/waitlisted KOD — kutish ro‘yxatida\n/cancel — kiritishni bekor qilish`;
 const fields=[['family','Familiyani lotin alifbosida yuboring (Family name).'],['given','Ismni lotin alifbosida yuboring (First name).'],['passport','To‘liq pasport raqamini yuboring: ikki harf va 7 raqam.'],['phone','Aloqa telefonini yuboring.'],['email','Tasdiq xati keladigan Gmail/email manzilini yuboring.']];
 const stateLabels={queued:'Navbatda',working:'To‘ldirilmoqda',submitting:'Yuborilmoqda',booked:'BRON BOR',uncertain:'Emailni tekshiring',review:'Tekshirish tayyor',paused:'Qo‘lda tekshirish',waitlisted:'Kutish ro‘yxati',archived:'Navbatdan olingan'};
 class Bot{
@@ -74,8 +74,13 @@ class Bot{
         if(!shots.length){this.reply(id,'Bu nomzod uchun hali skrinshot yo‘q.');return;}
         for(const e of shots){const shot=this.store.evidenceFile(e.id);this.store.notify(`screens:${id}:${e.id}`,`📸 ${c.family} ${c.given}\nBosqich: ${e.stage}`,{file:shot.file,capturedAt:shot.captured_at,url:shot.url});}return;
       }
-      if(cmd==='/panel'){this.reply(id,'Admin panel shu kompyuterda: http://127.0.0.1:4173\nWindows: START.cmd. Serverda: SSH tunnel orqali ochiladi.');return;}
-      if(cmd==='/status'||cmd==='/schedule'&&!args.length){const s=this.settings(),a=this.agent.status();this.reply(id,`${a.message}\nNomzodlar: ${this.store.list().length}\nKunlik jadval: ${s.enabled?'yoqilgan':'o‘chiq'}\n${s.prepare} tayyorlanish → ${s.release} qidirish → ${s.end} yakun\nToshkent vaqti; parallel: ${s.parallel}\nYuborilmagan xabarlar: ${this.store.pending().length}`);return;}
+      if(cmd==='/panel'){
+        const panel=this.config.frontendOrigin||'http://127.0.0.1:4173';
+        if(/^https:\/\//.test(panel))await this.api.call('sendMessage',{chat_id:String(this.config.owner_chat_id),text:'📱 Admin panelni ochish uchun tugmani bosing.',reply_markup:{inline_keyboard:[[{text:'Admin panelni ochish',web_app:{url:panel}}]]}});
+        else this.reply(id,`Admin panel shu kompyuterda: ${panel}`);
+        return;
+      }
+      if(cmd==='/status'||cmd==='/schedule'&&!args.length){const s=this.settings(),a=this.agent.status();const sessions=(a.sessions||[]).slice(0,20).map((x,i)=>`${i+1}. ${x.name}: ${x.message}`).join('\n');this.reply(id,`${a.message}\nNomzodlar: ${this.store.list().length}\nKunlik jadval: ${s.enabled?'yoqilgan':'o‘chiq'}\n${s.prepare} tayyorlanish → ${s.release} qidirish → ${s.end} yakun\nToshkent vaqti; parallel: ${s.parallel}\nYuborilmagan xabarlar: ${this.store.pending().length}${sessions?'\n\nSessiyalar:\n'+sessions:''}`);return;}
       if(['/schedule','/end','/parallel'].includes(cmd)){
         const s=this.settings();
         if(cmd==='/schedule'){if(!['on','off'].includes(args[0]))throw new Error('/schedule on yoki /schedule off');s.enabled=args[0]==='on';}
@@ -107,6 +112,7 @@ class Bot{
     if(!this.api.configured())throw new Error('Telegram token/owner_chat_id sozlanmagan');
     const hook=await this.api.call('getWebhookInfo');if(hook.url)throw new Error('Botda webhook bor. Eski botni to‘xtatib yangi polling rejimini sozlang.');
     await this.api.call('setMyCommands',{commands:[{command:'add',description:'Nomzod qo‘shish'},{command:'list',description:'Nomzodlar'},{command:'status',description:'Agent holati'},{command:'run',description:'Hozir bron qidirish'},{command:'stop',description:'Bugungi ishni to‘xtatish'},{command:'help',description:'Barcha buyruqlar'}],scope:{type:'chat',chat_id:String(this.config.owner_chat_id)}});
+    if(/^https:\/\//.test(this.config.frontendOrigin||''))await this.api.call('setChatMenuButton',{chat_id:String(this.config.owner_chat_id),menu_button:{type:'web_app',text:'Admin panel',web_app:{url:this.config.frontendOrigin}}});
     while(!this.closed){
       try{
         this.controller=new AbortController();

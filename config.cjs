@@ -13,6 +13,7 @@ function config(){
     publicHost:process.env.RENDER_EXTERNAL_HOSTNAME||'',
     adminKey:process.env.ADMIN_API_KEY||'',
     frontendOrigin:process.env.FRONTEND_ORIGIN||'',
+    screenshots:process.env.AGENT_SCREENSHOTS?process.env.AGENT_SCREENSHOTS==='true':app.screenshots!==false,
     headless:process.env.AGENT_HEADLESS?process.env.AGENT_HEADLESS==='true':app.headless!==false,
     browserChannel:process.env.BROWSER_CHANNEL||app.browserChannel||(process.platform==='win32'?'chrome':undefined)};
 }

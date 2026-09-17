@@ -1,9 +1,10 @@
 {
   "headless": true,
+  "screenshots": false,
   "parallel": "all",
   "scheduleEnabled": true,
-  "prepareTime": "17:55",
-  "releaseTime": "18:00",
+  "prepareTime": "18:55",
+  "releaseTime": "19:00",
   "endTime": "20:00",
   "timezone": "Asia/Tashkent"
 }

@@ -36,6 +36,6 @@ So‘ng brauzerda http://127.0.0.1:4173 manzilini oching. 4173 portni internetga
 
 ## Ish tartibi
 
-17:55 tayyorlanish; 18:00–20:00 Toshkent vaqti bilan Short stay qidirish. Default barcha nomzodlar parallel. /status, /add, /parallel all va panel orqali boshqariladi. Ko‘p sessiya server RAM/CPU resursini talab qiladi; 20 nomzod lokal brauzer sinovidan o‘tkazilgan, Droplet’da ham o‘lchash kerak.
+18:55 tayyorlanish; 19:00–20:00 Toshkent vaqti bilan Short stay qidirish. Faqat navbatdagi nomzodlar sonicha alohida sessiya ochiladi, ko‘pi bilan 20 ta. /status, /add, /parallel all va panel orqali boshqariladi. Ko‘p sessiya server RAM/CPU resursini talab qiladi; 20 nomzod lokal brauzer sinovidan o‘tkazilgan, Droplet’da ham o‘lchash kerak.
 
 Yangilashda `docker compose down`, kodni almashtirish, `data/` va private konfiguratsiyani saqlash, build/test, keyin `docker compose up -d`. Docker va systemd variantini bir vaqtning o‘zida ishlatmang. Brauzer sandboxi yoqilgan; Linux seccomp profili paketda bor.
