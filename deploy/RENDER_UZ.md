@@ -41,6 +41,7 @@ Quyidagilarni Render xizmatidagi **Environment** bo‘limiga kiriting:
 | `AGENT_PANEL` | `true` |
 | `AGENT_PANEL_HOST` | `0.0.0.0` |
 | `AGENT_HEADLESS` | `true` |
+| `AGENT_SCREENSHOTS` | `false` |
 | `AGENT_DATA_DIR` | `/app/data` |
 | `TZ` | `Asia/Tashkent` |
 
@@ -54,7 +55,7 @@ Advanced / Disks bo‘limida disk qo‘shing:
 
 - Name: `jpwatcher-data`.
 - Mount Path: **`/app/data`** — aynan shu yo‘l.
-- Size: kamida 1 GB; skrinshotlar ko‘payganda kengaytiring.
+- Size: kamida 1 GB; SQLite bazasi va tarix shu yerda saqlanadi.
 
 Faqat shu disk ostidagi fayllar restart va deploy’dan keyin saqlanadi. SQLite bazani diskdan tashqarida qoldirish nomzodlar va oldingi bron tarixini yo‘qotishi mumkin. Persistent disk paid xizmatga ulanadi. [Render Persistent Disks](https://render.com/docs/disks)
 
